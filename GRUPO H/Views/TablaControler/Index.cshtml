@@ -1,0 +1,897 @@
+﻿@model List<Tabla>
+<h1 class="titulo">Gráficos de Rendimiento Academico UAGRM</h1>
+
+<!-- Crear el lienzo donde se renderizará el gráfico -->
+<br />
+<br />
+
+<div class="container">
+    <div class="row">
+        <div class="col-3 mx-auto d-flex justify-content-center">
+            <select id="selectTabla" class="form-select">
+                <option value="1">Tabla 1</option>
+                <option value="2">Tabla 2</option>
+                <option value="3">Tabla 3</option>
+                <option value="4">Tabla 4</option>
+                <option value="5">Tabla 5</option>
+                <option value="6">Tabla 6</option>
+                <option value="7">Tabla 7</option>
+                <option value="8">Tabla 8</option>
+                <option value="9">Tabla 9</option>
+                <option value="10">Tabla 10</option>
+                <option value="11">Tabla 11</option>
+                <option value="12">Tabla 12</option>
+                <option value="13">Tabla 13</option>
+                <option value="14">Tabla 14</option>
+                <option value="15">Tabla 15</option>
+                <option value="16">Tabla 16</option>
+                <option value="17">Tabla 17</option>
+                <option value="18">Tabla 18</option>
+                <option value="19">Tabla 19</option>
+                <option value="20">Tabla 20</option>
+                <option value="21">Tabla 21</option>
+                <option value="22">Tabla 22</option>
+                <option value="23">Tabla 23</option>
+            </select>
+        </div>
+    </div>
+</div>
+<br />
+<br />
+<div class="row">
+    <div class="col-sm-3">
+        <div id="AreaFiltros" class="mx-3"></div>
+        <br />
+        <div id="AreaTabla" class="mx-3">
+        </div>
+    </div>
+    <div class="col-sm-9">
+        <div id="AreaChart" class="border rounded"></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    //Variables de filtros
+    var filtroPeriodo = '';
+    var filtroCarrera = '';
+    var filtroLocalidad = '';
+    var filtroFacultad = '';
+    var filtroOrden = 'desc';
+    var filtroModalidad = '';
+    //
+    let selectFacultad = document.createElement('select');
+    let selectPeriodo = document.createElement('select');
+    let selectLocalidad = document.createElement('select');
+    let selectModalidad = document.createElement('select');
+    let selectCarrera = document.createElement('select');
+    let selectOrden = document.createElement('select');
+    //
+    var numTabla = '1'; 
+
+    function actualizarGrafico(etiquetas, valores) {
+        const areaChartDiv = document.getElementById("AreaChart");
+        etiquetas.shift();
+        valores.shift();
+        // Limpiar todo el contenido del div
+        areaChartDiv.innerHTML = "";
+
+        // Crear un nuevo elemento canvas
+        const canvas = document.createElement("canvas");
+        canvas.id = "myChart"; // Asignar un id al canvas
+        canvas.width = 400;    // Establecer ancho
+        canvas.height = 200;   // Establecer alto
+
+        // Agregar el canvas al div
+        areaChartDiv.appendChild(canvas);
+
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar', // Tipo de gráfico
+            data: {
+                labels: etiquetas, // Etiquetas en el eje X
+                datasets: [{
+                    label: '',
+                    data: valores, // Datos a graficar en el eje Y
+                    backgroundColor: 'rgba(36, 122, 218, 0.38)',
+                    borderColor: '#00338d',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+              
+                    y: {
+                        beginAtZero: true
+                    }
+                    
+                }
+            }
+        });
+    }
+    function actualizarGrafico2(etiquetas, valores,valores2) {
+        const areaChartDiv = document.getElementById("AreaChart");
+
+        // Limpiar todo el contenido del div
+        areaChartDiv.innerHTML = "";
+
+        // Crear un nuevo elemento canvas
+        const canvas = document.createElement("canvas");
+        canvas.id = "myChart"; // Asignar un id al canvas
+        canvas.width = 400;    // Establecer ancho
+        canvas.height = 200;   // Establecer alto
+
+        // Agregar el canvas al div
+        areaChartDiv.appendChild(canvas);
+        etiquetas.shift();
+        valores.shift();
+        valores2.shift();
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar', // Tipo de gráfico
+            data: {
+                labels: etiquetas, // Etiquetas en el eje X
+                datasets: [{
+                    label: '',
+                    data: valores, // Datos a graficar en el eje Y
+                    backgroundColor: 'rgba(36, 122, 218, 0.38)',
+                    borderColor: '#00338d',
+                    borderWidth: 1
+                },
+                {
+                    label: '', // Segunda columna
+                    data: valores2, // Segundo conjunto de datos a graficar
+                    backgroundColor: 'rgba(218, 36, 84, 0.38)', // Color de fondo de las barras del segundo conjunto
+                    borderColor: 'rgba(218, 36, 84, 1)', // Color del borde de las barras del segundo conjunto
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+    function actualizarTabla(etiquetas, valores) {
+        const areaTablaDiv = document.getElementById("AreaTabla");
+        // Limpiar todo el contenido del div
+        areaTablaDiv.innerHTML = "";
+        // Crear un nuevo elemento canvas
+        for (var i = 0; i < etiquetas.length; i++){
+            var fila = document.createElement('div');
+            fila.classList.add('row');
+            var col1 = document.createElement('div');
+            col1.classList.add('col')
+            col1.innerText = etiquetas[i];
+            col1.classList.add('border');
+            col1.classList.add('border-dark');
+            col1.classList.add('text-center', 'd-flex', 'align-items-center', 'justify-content-center');
+            var col2 = document.createElement('div');
+            col2.classList.add('col')
+            col2.innerText = valores[i];
+            col2.classList.add('border');
+            col2.classList.add('border-dark');
+            col2.classList.add('text-center', 'd-flex', 'align-items-center', 'justify-content-center');
+
+
+            fila.appendChild(col1);
+            fila.appendChild(col2);
+            areaTablaDiv.appendChild(fila);
+        }
+    }
+    function actualizarTabla2(etiquetas, valores, valores2) {
+        const areaTablaDiv = document.getElementById("AreaTabla");
+        // Limpiar todo el contenido del div
+        areaTablaDiv.innerHTML = "";
+        // Crear un nuevo elemento canvas
+        for (var i = 0; i < etiquetas.length; i++) {
+            var fila = document.createElement('div');
+            fila.classList.add('row');
+            var col1 = document.createElement('div');
+            col1.classList.add('col')
+            col1.innerText = etiquetas[i];
+            col1.classList.add('border');
+            col1.classList.add('border-dark');
+            col1.classList.add('text-center', 'd-flex', 'align-items-center', 'justify-content-center');
+            var col2 = document.createElement('div');
+            col2.classList.add('col')
+            col2.innerText = valores[i];
+            col2.classList.add('border');
+            col2.classList.add('border-dark');
+            col2.classList.add('text-center', 'd-flex', 'align-items-center', 'justify-content-center');
+            var col3 = document.createElement('div');
+            col3.classList.add('col')
+            col3.innerText = valores2[i];
+            col3.classList.add('border');
+            col3.classList.add('border-dark');
+            col3.classList.add('text-center', 'd-flex', 'align-items-center', 'justify-content-center');
+
+            fila.appendChild(col1);
+            fila.appendChild(col2);
+            fila.appendChild(col3);
+            areaTablaDiv.appendChild(fila);
+        }
+    }
+    function actualizaFiltro(tabla) {
+        const areaFiltro = document.getElementById("AreaFiltros");
+        areaFiltro.innerHTML = "";
+        selectCarrera.innerHTML = "";
+        selectPeriodo.innerHTML = "";
+        selectOrden.innerHTML = "";
+        selectModalidad.innerHTML = "";
+        selectFacultad.innerHTML = "";
+        selectLocalidad.innerHTML = "";
+        // OPCIONES PERIODO
+        let periodos = [
+            { valor: "", texto: "Todos" },
+            { valor: "2020-1", texto: "2020-1" },
+            { valor: "2019-2", texto: "2019-2" },
+            { valor: "2019-1", texto: "2019-1" }
+        ];
+        // OPCIONES LOCALIDAD
+        let localidades = [
+            { valor: "", texto: "Todos" },
+            { valor: "4 CANADAS", texto: "4 CANADAS" },
+            { valor: "CAMIRI", texto: "CAMIRI" },
+            { valor: "COMARAPA", texto: "COMARAPA" },
+            { valor: "COTOCA", texto: "COTOCA" },
+            { valor: "EL TORNO", texto: "EL TORNO" },
+            { valor: "LA GUARDIA", texto: "LA GUARDIA" },
+            { valor: "MAIRANA", texto: "MAIRANA" },
+            { valor: "MONTERO", texto: "MONTERO" },
+            { valor: "PUERTO SUAREZ", texto: "PUERTO SUAREZ" },
+            { valor: "ROBORE", texto: "ROBORE" },
+            { valor: "SAN IGNACIO DE VELAS", texto: "SAN IGNACIO DE VELAS" },
+            { valor: "SAN JOSE DE CHIQUITO", texto: "SAN JOSE DE CHIQUITO" },
+            { valor: "SAN JULIAN", texto: "SAN JULIAN" },
+            { valor: "SAN MATIAS", texto: "SAN MATIAS" },
+            { valor: "SANTA CRUZ", texto: "SANTA CRUZ" },
+            { valor: "VALLEGRANDE", texto: "VALLEGRANDE" },
+            { valor: "YAPACANI", texto: "YAPACANI" }
+        ];
+        // OPCIONES FACULTAD
+        let facultades = [
+            { valor: "", texto: "Todos" },
+            { valor: "01 INTEGRAL DEL CHACO", texto: "01 INTEGRAL DEL CHACO" },
+            { valor: "02 POLITECNICA", texto: "02 POLITECNICA" },
+            { valor: "03 CIENCIAS AGRICOLAS", texto: "03 CIENCIAS AGRICOLAS" },
+            { valor: "04 CIENCIAS ECONOMICAS", texto: "04 CIENCIAS ECONOMICAS" },
+            { valor: "05 CIENCIAS EXACTAS Y", texto: "05 CIENCIAS EXACTAS Y" },
+            { valor: "06 CIENCIAS JURIDICAS", texto: "06 CIENCIAS JURIDICAS" },
+            { valor: "07 CIENCIAS VETERINARI", texto: "07 CIENCIAS VETERINARI" },
+            { valor: "08 HUMANIDADES", texto: "08 HUMANIDADES" },
+            { valor: "09 CIENCIAS DE LA SALU", texto: "09 CIENCIAS DE LA SALU" },
+            { valor: "10 CIENCIAS FARMACEUTI", texto: "10 CIENCIAS FARMACEUTI" },
+            { valor: "11 CIENCIAS DEL HABITA", texto: "11 CIENCIAS DEL HABITA" },
+            { valor: "12 AUDITORIA FINANCIER", texto: "12 AUDITORIA FINANCIER" },
+            { valor: "14 INTEGRAL DE LOS VAL", texto: "14 INTEGRAL DE LOS VAL" },
+            { valor: "18 INGENIERIA EN CIENC", texto: "18 INGENIERIA EN CIENC" }
+        ];
+        // OPCIONES MODALIDAD
+        let modalidades = [
+            { valor: "", texto: "Todos" },
+            { valor: "DISTANCIA", texto: "DISTANCIA" },
+            { valor: "PRESENCIAL", texto: "PRESENCIAL" },
+            { valor: "VIRTUAL", texto: "VIRTUAL" }
+        ];
+        // OPCIONES CARRERA
+        let carreras = [
+            { valor: "", texto: "Todos" },
+            { valor: "101-4 ADMINISTRACION DE EMPRESAS", texto: "101-4 ADMINISTRACION DE EMPRESAS" },
+            { valor: "102-4 INGENIERIA COMERCIAL", texto: "102-4 INGENIERIA COMERCIAL" },
+            { valor: "104-2 ARQUITECTURA", texto: "104-2 ARQUITECTURA" },
+            { valor: "105-0 CONTADURIA PUBLICA", texto: "105-0 CONTADURIA PUBLICA" },
+            { valor: "105-4 CONTADURIA PUBLICA", texto: "105-4 CONTADURIA PUBLICA" },
+            { valor: "105-5 CONTADURIA PUBLICA", texto: "105-5 CONTADURIA PUBLICA" },
+            { valor: "106-1 BIOQUIMICA", texto: "106-1 BIOQUIMICA" },
+            { valor: "108-5 ECONOMIA", texto: "108-5 ECONOMIA" },
+            { valor: "109-1 INFORMACION Y CONTROL DE GESTI", texto: "109-1 INFORMACION Y CONTROL DE GESTI" },
+            { valor: "117-2 INGENIERIA CIVIL", texto: "117-2 INGENIERIA CIVIL" },
+            { valor: "118-4 INGENIERIA ELECTROMECANICA", texto: "118-4 INGENIERIA ELECTROMECANICA" },
+            { valor: "118-5 INGENIERIA ELECTROMECANICA", texto: "118-5 INGENIERIA ELECTROMECANICA" },
+            { valor: "118-6 INGENIERIA ELECTRICA", texto: "118-6 INGENIERIA ELECTRICA" },
+            { valor: "118-7 INGENIERIA ELECTRONICA", texto: "118-7 INGENIERIA ELECTRONICA" },
+            { valor: "118-8 INGENIERIA MECANICA", texto: "118-8 INGENIERIA MECANICA" },
+            { valor: "122-1 INGENIERIA INDUSTRIAL", texto: "122-1 INGENIERIA INDUSTRIAL" },
+            { valor: "122-2 INGENIERIA INDUSTRIAL", texto: "122-2 INGENIERIA INDUSTRIAL" },
+            { valor: "125-1 INGENIERIA PETROLERA", texto: "125-1 INGENIERIA PETROLERA" },
+            { valor: "127-2 INGENIERIA QUIMICA", texto: "127-2 INGENIERIA QUIMICA" },
+            { valor: "127-3 INGENIERIA QUIMICA", texto: "127-3 INGENIERIA QUIMICA" },
+            { valor: "129-1 MEDICINA", texto: "129-1 MEDICINA" },
+            { valor: "130-2 FARMACIA", texto: "130-2 FARMACIA" },
+            { valor: "131-3 ENFERMERIA", texto: "131-3 ENFERMERIA" },
+            { valor: "132-0 ODONTOLOGIA", texto: "132-0 ODONTOLOGIA" },
+            { valor: "139-1 VETERINARIA Y ZOOTECNIA", texto: "139-1 VETERINARIA Y ZOOTECNIA" },
+            { valor: "139-2 VETERINARIA Y ZOOTECNIA", texto: "139-2 VETERINARIA Y ZOOTECNIA" },
+            { valor: "139-3 MEDICINA VETERINARIA Y ZOOTECN", texto: "139-3 MEDICINA VETERINARIA Y ZOOTECN" },
+            { valor: "140-1 BIOLOGIA", texto: "140-1 BIOLOGIA" },
+            { valor: "140-2 BIOLOGIA", texto: "140-2 BIOLOGIA" },
+            { valor: "140-3 BIOLOGIA", texto: "140-3 BIOLOGIA" },
+            { valor: "140-4 BIOLOGIA", texto: "140-4 BIOLOGIA" },
+            { valor: "141-2 INGENIERIA DE ALIMENTOS", texto: "141-2 INGENIERIA DE ALIMENTOS" },
+            { valor: "142-0 INGENIERIA AMBIENTAL", texto: "142-0 INGENIERIA AMBIENTAL" },
+            { valor: "142-1 INGENIERIA AMBIENTAL", texto: "142-1 INGENIERIA AMBIENTAL" },
+            { valor: "143-0 ZOOTECNIA", texto: "143-0 ZOOTECNIA" },
+            { valor: "144-0 INGENIERIA FINANCIERA", texto: "144-0 INGENIERIA FINANCIERA" },
+            { valor: "145-5 ADMINISTRACION EDUCATIVA", texto: "145-5 ADMINISTRACION EDUCATIVA" },
+            { valor: "145-9 CIENCIAS DE LA EDUCACION", texto: "145-9 CIENCIAS DE LA EDUCACION" },
+            { valor: "145-A CIENCIAS DE LA EDUCACION", texto: "145-A CIENCIAS DE LA EDUCACION" },
+            { valor: "145-B ADMINISTRACION EDUCATIVA", texto: "145-B ADMINISTRACION EDUCATIVA" },
+            { valor: "145-E CIENCIAS DE LA EDUCACION", texto: "145-E CIENCIAS DE LA EDUCACION" },
+            { valor: "145-N CIENCIAS DE LA EDUCACION", texto: "145-N CIENCIAS DE LA EDUCACION" },
+            { valor: "146-1 CIENCIAS DE LA COMUNICACION", texto: "146-1 CIENCIAS DE LA COMUNICACION" },
+            { valor: "146-E CIENCIAS DE LA COMUNICACION", texto: "146-E CIENCIAS DE LA COMUNICACION" },
+            { valor: "147-1 SOCIOLOGIA", texto: "147-1 SOCIOLOGIA" },
+            { valor: "147-2 SOCIOLOGIA", texto: "147-2 SOCIOLOGIA" },
+            { valor: "148-1 PSICOLOGIA", texto: "148-1 PSICOLOGIA" },
+            { valor: "149-1 GESTION DEL TURISMO", texto: "149-1 GESTION DEL TURISMO" },
+            { valor: "150-1 RELACIONES INTERNACIONALES", texto: "150-1 RELACIONES INTERNACIONALES" },
+            { valor: "152-0 COMERCIO INTERNACIONAL", texto: "152-0 COMERCIO INTERNACIONAL" },
+            { valor: "153-0 INGENIERIA AGRONOMICA", texto: "153-0 INGENIERIA AGRONOMICA" },
+            { valor: "153-1 INGENIERIA AGRONOMICA", texto: "153-1 INGENIERIA AGRONOMICA" },
+            { valor: "153-2 INGENIERIA AGRONOMICA", texto: "153-2 INGENIERIA AGRONOMICA" },
+            { valor: "153-3 INGENIERIA AGRONOMICA", texto: "153-3 INGENIERIA AGRONOMICA" },
+            { valor: "154-0 INGENIERIA AGRICOLA", texto: "154-0 INGENIERIA AGRICOLA" },
+            { valor: "154-1 INGENIERIA AGRICOLA", texto: "154-1 INGENIERIA AGRICOLA" },
+            { valor: "156-2 CIENCIA POLITICA Y ADMINISTRAC", texto: "156-2 CIENCIA POLITICA Y ADMINISTRAC" },
+            { valor: "156-3 CIENCIA POLITICA Y ADMINISTRAC", texto: "156-3 CIENCIA POLITICA Y ADMINISTRAC" },
+            { valor: "157-0 DERECHO", texto: "157-0 DERECHO" },
+            { valor: "157-1 DERECHO", texto: "157-1 DERECHO" },
+            { valor: "159-2 TRABAJO SOCIAL", texto: "159-2 TRABAJO SOCIAL" },
+            { valor: "160-0 INGENIERIA EN AGRIMENSURA", texto: "160-0 INGENIERIA EN AGRIMENSURA" },
+            { valor: "161-0 INGENIERIA METALURGIA", texto: "161-0 INGENIERIA METALURGIA" },
+            { valor: "161-1 INGENIERIA MATERIALES", texto: "161-1 INGENIERIA MATERIALES" },
+            { valor: "170-0 INGENIERIA FORESTAL", texto: "170-0 INGENIERIA FORESTAL" },
+            { valor: "170-1 INGENIERIA FORESTAL", texto: "170-1 INGENIERIA FORESTAL" },
+            { valor: "170-2 INGENIERIA FORESTAL", texto: "170-2 INGENIERIA FORESTAL" },
+            { valor: "171-0 CIENCIAS AMBIENTALES", texto: "171-0 CIENCIAS AMBIENTALES" },
+            { valor: "171-1 CIENCIAS AMBIENTALES", texto: "171-1 CIENCIAS AMBIENTALES" },
+            { valor: "187-1 INGENIERIA INFORMATICA", texto: "187-1 INGENIERIA INFORMATICA" },
+            { valor: "187-3 INGENIERIA INFORMATICA", texto: "187-3 INGENIERIA INFORMATICA" },
+            { valor: "187-4 INGENIERIA EN SISTEMAS", texto: "187-4 INGENIERIA EN SISTEMAS" },
+            { valor: "187-5 INGENIERIA EN REDES Y TELECOMU", texto: "187-5 INGENIERIA EN REDES Y TELECOMU" },
+            { valor: "191-2 ARTE", texto: "191-2 ARTE" },
+            { valor: "192-2 DISENO INTEGRAL", texto: "192-2 DISENO INTEGRAL" },
+            { valor: "193-2 PLANIFICACION TERRITORIAL", texto: "193-2 PLANIFICACION TERRITORIAL" },
+            { valor: "210-3 CONSTRUCCIONES CIVILES", texto: "210-3 CONSTRUCCIONES CIVILES" },
+            { valor: "217-1 TECNOLOGIA DE ALIMENTOS", texto: "217-1 TECNOLOGIA DE ALIMENTOS" },
+            { valor: "227-4 ING. DE CONTROL DE PROCESOS", texto: "227-4 ING. DE CONTROL DE PROCESOS" },
+            { valor: "227-5 INGENIERIA DE CONTROL DE PROCE", texto: "227-5 INGENIERIA DE CONTROL DE PROCE" },
+            { valor: "234-1 TECNICO SUPERIOR EN PETROLEOS", texto: "234-1 TECNICO SUPERIOR EN PETROLEOS" },
+            { valor: "234-5 INGENIERIA DEL PETROLEO Y GAS", texto: "234-5 INGENIERIA DEL PETROLEO Y GAS" },
+            { valor: "236-3 INGENIERIA EN AGROPECUARIA", texto: "236-3 INGENIERIA EN AGROPECUARIA" },
+            { valor: "238-1 INGENIERIA SOCIO AMBIENTAL", texto: "238-1 INGENIERIA SOCIO AMBIENTAL" },
+            { valor: "239-1 AGROPECUARIA", texto: "239-1 AGROPECUARIA" },
+            { valor: "242-4 LICENCIATURA EN INGLES", texto: "242-4 LICENCIATURA EN INGLES" },
+            { valor: "242-7 LENGUAS MODERNAS Y FILOLOGIA H", texto: "242-7 LENGUAS MODERNAS Y FILOLOGIA H" },
+            { valor: "242-8 LENGUAS MODERNAS Y FILOLOGIA H", texto: "242-8 LENGUAS MODERNAS Y FILOLOGIA H" },
+            { valor: "242-9 LENGUAS MODERNAS Y FILOLOGIA H", texto: "242-9 LENGUAS MODERNAS Y FILOLOGIA H" },
+            { valor: "301-3 MECANICA GENERAL", texto: "301-3 MECANICA GENERAL" },
+            { valor: "301-4 MECANICA INDUSTRIAL", texto: "301-4 MECANICA INDUSTRIAL" },
+            { valor: "301-5 MECANICA DE PRODUCCION", texto: "301-5 MECANICA DE PRODUCCION" },
+            { valor: "301-6 MECANICA AUTOMOTRIZ", texto: "301-6 MECANICA AUTOMOTRIZ" },
+            { valor: "304-3 ELECTRICIDAD INDUSTRIAL", texto: "304-3 ELECTRICIDAD INDUSTRIAL" },
+            { valor: "305-1 ELECTRONICA", texto: "305-1 ELECTRONICA" },
+            { valor: "305-2 ELECTRONICA", texto: "305-2 ELECTRONICA" },
+            { valor: "306-0 OFIMATICA", texto: "306-0 OFIMATICA" },
+            { valor: "307-0 SIDERURGIA", texto: "307-0 SIDERURGIA" },
+            { valor: "401-3 INGENIERIA AGROPECUARIA", texto: "401-3 INGENIERIA AGROPECUARIA" },
+            { valor: "405-1 ACTIVIDAD FISICA", texto: "405-1 ACTIVIDAD FISICA" },
+            { valor: "405-2 ACTIVIDAD FISICA", texto: "405-2 ACTIVIDAD FISICA" }
+        ];
+        //OPCIONES ASC DES
+        let ordenes = [
+            { valor: "asc", texto: "asc" },
+            { valor: "desc", texto: "desc" },
+        ];
+        // Recorrer las opciones y agregarlas al select
+        periodos.forEach(function (opcion) {
+            let FiltroPeriodo = document.createElement("option");
+            FiltroPeriodo.value = opcion.valor;
+            FiltroPeriodo.text = opcion.texto;
+            selectPeriodo.appendChild(FiltroPeriodo);  // Añadir la opción al select
+        });
+        localidades.forEach(function (opcion) {
+            let FiltroLocalidad = document.createElement("option");
+            FiltroLocalidad.value = opcion.valor;
+            FiltroLocalidad.text = opcion.texto;
+            selectLocalidad.appendChild(FiltroLocalidad);  // Añadir la opción al select
+        });
+        facultades.forEach(function (opcion) {
+            let FiltroFacultad = document.createElement("option");
+            FiltroFacultad.value = opcion.valor;
+            FiltroFacultad.text = opcion.texto;
+            selectFacultad.appendChild(FiltroFacultad);  // Añadir la opción al select
+        });
+        modalidades.forEach(function (opcion) {
+            let FiltroModalidad = document.createElement("option");
+            FiltroModalidad.value = opcion.valor;
+            FiltroModalidad.text = opcion.texto;
+            selectModalidad.appendChild(FiltroModalidad);  // Añadir la opción al select
+        });
+        carreras.forEach(function (opcion) {
+            let FiltroCarrera = document.createElement("option");
+            FiltroCarrera.value = opcion.valor;
+            FiltroCarrera.text = opcion.texto;
+            selectCarrera.appendChild(FiltroCarrera);  // Añadir la opción al select
+        });
+        ordenes.forEach(function (opcion) {
+            let FiltroOrden = document.createElement("option");
+            FiltroOrden.value = opcion.valor;
+            FiltroOrden.text = opcion.texto;
+            selectOrden.appendChild(FiltroOrden);  // Añadir la opción al select
+        });
+        switch (tabla){
+            case '1':
+                //CREAR PERIODO FACULTAD
+                var fila = document.createElement('div');
+                fila.classList.add('row');
+                var col1 = document.createElement('div');
+                var col2 = document.createElement('div');
+                col1.classList.add('col','border','border-dark', 'text-center', 'd-flex', 'align-items-center', 'justify-content-center');
+                col2.classList.add('col', 'border', 'border-dark');
+                col2.appendChild(selectPeriodo);
+                col1.innerText = 'Periodo';
+                fila.appendChild(col1);
+                fila.appendChild(col2);
+                areaFiltro.appendChild(fila);
+
+                var fila2 = document.createElement('div');
+                fila2.classList.add('row');
+                var col1 = document.createElement('div');
+                var col2 = document.createElement('div');
+                col1.classList.add('col', 'border', 'border-dark', 'text-center', 'd-flex', 'align-items-center', 'justify-content-center');
+                col2.classList.add('col', 'border', 'border-dark');
+                col2.appendChild(selectFacultad);
+                col1.innerText = 'Facultad';
+                fila2.appendChild(col1);
+                fila2.appendChild(col2);
+                areaFiltro.appendChild(fila2);
+
+                break;
+            case '2':
+            case '3':
+                //CREAR PERIODO LOCALIDAD FACULTAD
+                var fila = document.createElement('div');
+                fila.classList.add('row');
+                var col1 = document.createElement('div');
+                var col2 = document.createElement('div');
+                col1.classList.add('col', 'border', 'border-dark', 'text-center', 'd-flex', 'align-items-center', 'justify-content-center');
+                col2.classList.add('col', 'border', 'border-dark');
+                col2.appendChild(selectPeriodo);
+                col1.innerText = 'Periodo';
+                fila.appendChild(col1);
+                fila.appendChild(col2);
+                areaFiltro.appendChild(fila);
+
+                var fila3 = document.createElement('div');
+                fila3.classList.add('row');
+                var col1 = document.createElement('div');
+                var col2 = document.createElement('div');
+                col1.classList.add('col', 'border', 'border-dark', 'text-center', 'd-flex', 'align-items-center', 'justify-content-center');
+                col2.classList.add('col', 'border', 'border-dark');
+                col2.appendChild(selectLocalidad);
+                col1.innerText = 'Localidad';
+                fila3.appendChild(col1);
+                fila3.appendChild(col2);
+                areaFiltro.appendChild(fila3);
+
+                var fila2 = document.createElement('div');
+                fila2.classList.add('row');
+                var col1 = document.createElement('div');
+                var col2 = document.createElement('div');
+                col1.classList.add('col', 'border', 'border-dark', 'text-center', 'd-flex', 'align-items-center', 'justify-content-center');
+                col2.classList.add('col', 'border', 'border-dark');
+                col2.appendChild(selectFacultad);
+                col1.innerText = 'Facultad';
+                fila2.appendChild(col1);
+                fila2.appendChild(col2);
+                areaFiltro.appendChild(fila2);
+
+                break;
+            case '4':
+            case '5':
+            case '7':
+            case '9':
+            case '11':
+            case '13':
+            case '17':
+            case '19':
+            case '21':
+            case '23':
+                //CREAR PERIODO
+                var fila3 = document.createElement('div');
+                fila3.classList.add('row');
+                var col1 = document.createElement('div');
+                var col2 = document.createElement('div');
+                col1.classList.add('col', 'border', 'border-dark', 'text-center', 'd-flex', 'align-items-center', 'justify-content-center');
+                col2.classList.add('col', 'border', 'border-dark');
+                col2.appendChild(selectPeriodo);
+                col1.innerText = 'Periodo';
+                fila3.appendChild(col1);
+                fila3.appendChild(col2);
+                areaFiltro.appendChild(fila3);
+                break;
+            case '6':
+                //CREAR Modalidad,facultad,periodo,localidad
+                var fila = document.createElement('div');
+                fila.classList.add('row');
+                var col1 = document.createElement('div');
+                var col2 = document.createElement('div');
+                col1.classList.add('col', 'border', 'border-dark', 'text-center', 'd-flex', 'align-items-center', 'justify-content-center');
+                col2.classList.add('col', 'border', 'border-dark');
+                col2.appendChild(selectModalidad);
+                col1.innerText = 'Modalid';
+                fila.appendChild(col1);
+                fila.appendChild(col2);
+                areaFiltro.appendChild(fila);
+
+                var fila3 = document.createElement('div');
+                fila3.classList.add('row');
+                var col1 = document.createElement('div');
+                var col2 = document.createElement('div');
+                col1.classList.add('col', 'border', 'border-dark', 'text-center', 'd-flex', 'align-items-center', 'justify-content-center');
+                col2.classList.add('col', 'border', 'border-dark');
+                col2.appendChild(selectFacultad);
+                col1.innerText = 'Facultad';
+                fila3.appendChild(col1);
+                fila3.appendChild(col2);
+                areaFiltro.appendChild(fila3);
+
+                var fila2 = document.createElement('div');
+                fila2.classList.add('row');
+                var col1 = document.createElement('div');
+                var col2 = document.createElement('div');
+                col1.classList.add('col', 'border', 'border-dark', 'text-center', 'd-flex', 'align-items-center', 'justify-content-center');
+                col2.classList.add('col', 'border', 'border-dark');
+                col2.appendChild(selectPeriodo);
+                col1.innerText = 'Periodo';
+                fila2.appendChild(col1);
+                fila2.appendChild(col2);
+                areaFiltro.appendChild(fila2);
+
+                var fila2 = document.createElement('div');
+                fila2.classList.add('row');
+                var col1 = document.createElement('div');
+                var col2 = document.createElement('div');
+                col1.classList.add('col', 'border', 'border-dark', 'text-center', 'd-flex', 'align-items-center', 'justify-content-center');
+                col2.classList.add('col', 'border', 'border-dark');
+                col2.appendChild(selectLocalidad);
+                col1.innerText = 'Localidad';
+                fila2.appendChild(col1);
+                fila2.appendChild(col2);
+                areaFiltro.appendChild(fila2);
+                break;
+            case '10':
+            case '12':
+                //CREAR Modalidad,facultad,carrera,localidad
+                var fila = document.createElement('div');
+                fila.classList.add('row');
+                var col1 = document.createElement('div');
+                var col2 = document.createElement('div');
+                col1.classList.add('col', 'border', 'border-dark', 'text-center', 'd-flex', 'align-items-center', 'justify-content-center');
+                col2.classList.add('col', 'border', 'border-dark');
+                col2.appendChild(selectModalidad);
+                col1.innerText = 'Modalid';
+                fila.appendChild(col1);
+                fila.appendChild(col2);
+                areaFiltro.appendChild(fila);
+
+                var fila3 = document.createElement('div');
+                fila3.classList.add('row');
+                var col1 = document.createElement('div');
+                var col2 = document.createElement('div');
+                col1.classList.add('col', 'border', 'border-dark', 'text-center', 'd-flex', 'align-items-center', 'justify-content-center');
+                col2.classList.add('col', 'border', 'border-dark');
+                col2.appendChild(selectFacultad);
+                col1.innerText = 'Facultad';
+                fila3.appendChild(col1);
+                fila3.appendChild(col2);
+                areaFiltro.appendChild(fila3);
+
+                var fila4 = document.createElement('div');
+                fila4.classList.add('row');
+                var col1 = document.createElement('div');
+                var col2 = document.createElement('div');
+                col1.classList.add('col', 'border', 'border-dark', 'text-center', 'd-flex', 'align-items-center', 'justify-content-center');
+                col2.classList.add('col', 'border', 'border-dark');
+                col2.appendChild(selectCarrera);
+                col1.innerText = 'Carrera';
+                fila4.appendChild(col1);
+                fila4.appendChild(col2);
+                areaFiltro.appendChild(fila4);
+
+                var fila2 = document.createElement('div');
+                fila2.classList.add('row');
+                var col1 = document.createElement('div');
+                var col2 = document.createElement('div');
+                col1.classList.add('col', 'border', 'border-dark', 'text-center', 'd-flex', 'align-items-center', 'justify-content-center');
+                col2.classList.add('col', 'border', 'border-dark');
+                col2.appendChild(selectLocalidad);
+                col1.innerText = 'Localidad';
+                fila2.appendChild(col1);
+                fila2.appendChild(col2);
+                areaFiltro.appendChild(fila2);
+                break;
+            default:
+                //filtro de asc desc
+        }
+    }
+    //Al INICIAR EL PROGRAMA SE CARGA LA PRIMERA TABLA
+    var etiquetas = @Html.Raw(Json.Serialize(Model.Select(d => d.Etiqueta)));
+    var valores = @Html.Raw(Json.Serialize(Model.Select(d => d.Valor)));
+    var valores2 = @Html.Raw(Json.Serialize(Model.Select(d => d.Valor)));;
+    actualizarTabla(etiquetas, valores);
+    actualizarGrafico(etiquetas,valores);
+    actualizaFiltro(numTabla);
+
+
+    //LISTENERS
+    var select1 = document.getElementById("selectTabla");
+    select1.addEventListener("change", function () {
+        numTabla = select1.value;
+        actualizaFiltro(select1.value);
+        filtro1 = '';
+        filtro2 = '';
+        filtro3 = '';
+        filtro4 = 'desc';
+        filtro5 = '';
+        filtro6 = '';
+        switch(select1.value){
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+            case '10':
+            case '11':
+            case '14':
+            case '18':
+            case '19':
+            case '20':
+            case '21':
+            case '22':
+            case '23':
+                actualizarDatos(numTabla, filtro1, filtro2, filtro3, filtro4, filtro5, filtro6);
+                break;
+            case '12':
+            case '13':
+            case '15':
+            case '16':
+            case '17':
+                actualizarDatos2(numTabla, filtro1, filtro2, filtro3, filtro4, filtro5, filtro6);
+                break;
+        }
+    });
+    function actualizarDatos(numTabla,filtroPeriodo,filtroCarrera,filtroFacultad,filtroOrden,filtroModalidad,filtroLocalidad){
+        fetch(`/TablaControler/ObtenerTabla?numTabla=${numTabla}&filtroFacultad=${filtroFacultad}&filtroPeriodo=${filtroPeriodo}&filtroModalidad=${filtroModalidad}&filtroLocalidad=${filtroLocalidad}&filtroOrden=${filtroOrden}&filtroCarrera=${filtroCarrera}`)
+            .then(response => response.json())
+            .then(datosFiltrados => {
+                // Extraer las etiquetas y valores de los datos obtenidos
+                var etiquetas = datosFiltrados.map(d => d.etiqueta);
+                var valores = datosFiltrados.map(d => d.valor);
+                console.log(etiquetas);
+                console.log(valores);
+                // Actualizar el gráfico con los nuevos datos
+                actualizarTabla(etiquetas, valores);
+                actualizarGrafico(etiquetas, valores);
+            })
+            .catch(error => console.error('Error al obtener los datos:', error));
+    }
+    function actualizarDatos2(numTabla, filtroPeriodo, filtroCarrera, filtroFacultad, filtroOrden, filtroModalidad, filtroLocalidad) {
+        fetch(`/TablaControler/ObtenerTabla?numTabla=${numTabla}&filtroFacultad=${filtroFacultad}&filtroPeriodo=${filtroPeriodo}&filtroModalidad=${filtroModalidad}&filtroLocalidad=${filtroLocalidad}&filtroOrden=${filtroOrden}&filtroCarrera=${filtroCarrera}`)
+            .then(response => response.json())
+            .then(datosFiltrados => {
+                // Extraer las etiquetas y valores de los datos obtenidos
+                var etiquetas = datosFiltrados.map(d => d.etiqueta);
+                var valores = datosFiltrados.map(d => d.valor);
+                var valores2 = datosFiltrados.map(d => d.valor2);
+                console.log(etiquetas);
+                console.log(valores);
+                // Actualizar el gráfico con los nuevos datos
+              
+                actualizarTabla2(etiquetas, valores,valores2);
+                actualizarGrafico2(etiquetas, valores,valores2);
+            })
+            .catch(error => console.error('Error al obtener los datos:', error));
+    }
+    selectCarrera.addEventListener("change", function(){
+        filtroCarrera = selectCarrera.value;
+        switch (select1.value) {
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+            case '10':
+            case '11':
+            case '14':
+            case '18':
+            case '19':
+            case '20':
+            case '21':
+            case '22':
+            case '23':
+                actualizarDatos(numTabla, filtroPeriodo, filtroCarrera, filtroFacultad, filtroOrden, filtroModalidad, filtroLocalidad);
+                break;
+            case '12':
+            case '13':
+            case '15':
+            case '16':
+            case '17':
+                actualizarDatos2(numTabla, filtroPeriodo, filtroCarrera, filtroFacultad, filtroOrden, filtroModalidad, filtroLocalidad);
+                break;
+        }
+    });
+    selectFacultad.addEventListener("change", function () {
+        filtroFacultad = selectFacultad.value;
+        switch (select1.value) {
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+            case '10':
+            case '11':
+            case '14':
+            case '18':
+            case '19':
+            case '20':
+            case '21':
+            case '22':
+            case '23':
+                actualizarDatos(numTabla, filtroPeriodo, filtroCarrera, filtroFacultad, filtroOrden, filtroModalidad, filtroLocalidad);
+                break;
+            case '12':
+            case '13':
+            case '15':
+            case '16':
+            case '17':
+                actualizarDatos2(numTabla, filtroPeriodo, filtroCarrera, filtroFacultad, filtroOrden, filtroModalidad, filtroLocalidad);
+                break;
+        }
+    });
+    selectPeriodo.addEventListener("change", function () {
+        filtroPeriodo = selectPeriodo.value;
+        switch (select1.value) {
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+            case '10':
+            case '11':
+            case '14':
+            case '18':
+            case '19':
+            case '20':
+            case '21':
+            case '22':
+            case '23':
+                actualizarDatos(numTabla, filtroPeriodo, filtroCarrera, filtroFacultad, filtroOrden, filtroModalidad, filtroLocalidad);
+                break;
+            case '12':
+            case '13':
+            case '15':
+            case '16':
+            case '17':
+                actualizarDatos2(numTabla, filtroPeriodo, filtroCarrera, filtroFacultad, filtroOrden, filtroModalidad, filtroLocalidad);
+                break;
+        }
+    });
+    selectModalidad.addEventListener("change", function () {
+        filtroMolidad = selectModalidad.value;
+        switch (select1.value) {
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+            case '10':
+            case '11':
+            case '14':
+            case '18':
+            case '19':
+            case '20':
+            case '21':
+            case '22':
+            case '23':
+                actualizarDatos(numTabla, filtroPeriodo, filtroCarrera, filtroFacultad, filtroOrden, filtroModalidad, filtroLocalidad);
+                break;
+            case '12':
+            case '13':
+            case '15':
+            case '16':
+            case '17':
+                actualizarDatos2(numTabla, filtroPeriodo, filtroCarrera, filtroFacultad, filtroOrden, filtroModalidad, filtroLocalidad);
+                break;
+        }
+    });
+    selectLocalidad.addEventListener("change", function(){
+        filtroLocalidad = selectLocalidad.value;
+        switch (select1.value) {
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+            case '10':
+            case '11':
+            case '14':
+            case '18':
+            case '19':
+            case '20':
+            case '21':
+            case '22':
+            case '23':
+                actualizarDatos(numTabla, filtroPeriodo, filtroCarrera, filtroFacultad, filtroOrden, filtroModalidad, filtroLocalidad);
+                break;
+            case '12':
+            case '13':
+            case '15':
+            case '16':
+            case '17':
+                actualizarDatos2(numTabla, filtroPeriodo, filtroCarrera, filtroFacultad, filtroOrden, filtroModalidad, filtroLocalidad);
+                break;
+        }
+    });
+    selectOrden.addEventListener("change", function () {
+        filtroOrden = selectOrden.value;
+        switch (select1.value) {
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+            case '10':
+            case '11':
+            case '14':
+            case '18':
+            case '19':
+            case '20':
+            case '21':
+            case '22':
+            case '23':
+                actualizarDatos(numTabla, filtroPeriodo, filtroCarrera, filtroFacultad, filtroOrden, filtroModalidad, filtroLocalidad);
+                break;
+            case '12':
+            case '13':
+            case '15':
+            case '16':
+            case '17':
+                actualizarDatos2(numTabla, filtroPeriodo, filtroCarrera, filtroFacultad, filtroOrden, filtroModalidad, filtroLocalidad);
+                break;
+        }
+    });  
+</script>
